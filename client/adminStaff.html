@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Elegance - Admin/Staff Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Salon Elegance</div>
+        <nav>
+            <a href="/home.html">Home</a>
+            <a href="/services.html">Services</a>
+            <a href="/bookings.html">Bookings</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/adminStaff.html" id="staff-panel-link" style="display: none;">Staff Panel</a>
+            <a href="/adminStaff.html" id="admin-panel-link" style="display: none;">Admin Panel</a>
+            <a href="#" id="logout" style="display: none;">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <div id="staff-panel" style="display: none;">
+            <h2>Staff Panel</h2>
+            <h3>Users</h3>
+            <div id="users"></div>
+            <h3>All Appointments</h3>
+            <div id="staff-appointments"></div>
+            <h3>Statistics</h3>
+            <div id="statistics"></div>
+            <h3>Manage Schedule</h3>
+            <form id="schedule-form">
+                <input type="date" id="schedule-date" required>
+                <input type="time" id="start-time" required>
+                <input type="time" id="end-time" required>
+                <label><input type="checkbox" id="is-holiday">Holiday</label>
+                <button type="submit">Update Schedule</button>
+            </form>
+        </div>
+        <div id="admin-panel" style="display: none;">
+            <h2>Admin Panel</h2>
+            <h3>Add Service</h3>
+            <form id="admin-service-form" style="display: none;">
+                <input type="text" id="service-name" placeholder="Service Name" required>
+                <textarea id="service-description" placeholder="Description"></textarea>
+                <input type="number" id="service-price" placeholder="Price" step="0.01" required>
+                <input type="text" id="service-image" placeholder="Image URL">
+                <button type="submit">Add Service</button>
+            </form>
+            <h3>Edit Service</h3>
+            <form id="edit-service-form" style="display: none;">
+                <input type="hidden" id="edit-service-id">
+                <input type="text" id="edit-service-name" placeholder="Service Name" required>
+                <textarea id="edit-service-description" placeholder="Description"></textarea>
+                <input type="number" id="edit-service-price" placeholder="Price" step="0.01" required>
+                <input type="text" id="edit-service-image" placeholder="Image URL">
+                <button type="submit">Update Service</button>
+                <button type="button" onclick="cancelEdit()">Cancel</button>
+            </form>
+            <h3>Add Facility</h3>
+            <form id="admin-facility-form" style="display: none;">
+                <input type="text" id="facility-name" placeholder="Facility Name" required>
+                <textarea id="facility-description" placeholder="Description"></textarea>
+                <input type="text" id="facility-image" placeholder="Image URL">
+                <button type="submit">Add Facility</button>
+            </form>
+            <h3>Edit Facility</h3>
+            <form id="edit-facility-form" style="display: none;">
+                <input type="hidden" id="edit-facility-id">
+                <input type="text" id="edit-facility-name" placeholder="Facility Name" required>
+                <textarea id="edit-facility-description" placeholder="Description"></textarea>
+                <input type="text" id="edit-facility-image" placeholder="Image URL">
+                <button type="submit">Update Facility</button>
+                <button type="button" onclick="cancelFacilityEdit()">Cancel</button>
+            </form>
+            <h3>Services</h3>
+            <div id="services"></div>
+            <h3>Facilities</h3>
+            <div id="facilities"></div>
+            <h3>Users</h3>
+            <div id="admin-users"></div>
+            <h3>Staff</h3>
+            <div id="staff"></div>
+            <h3>All Appointments</h3>
+            <div id="admin-appointments"></div>
+            <h3>Statistics</h3>
+            <div id="admin-statistics"></div>
+            <h3>Manage Schedule</h3>
+            <form id="schedule-form">
+                <input type="date" id="schedule-date" required>
+                <input type="time" id="start-time" required>
+                <input type="time" id="end-time" required>
+                <label><input type="checkbox" id="is-holiday">Holiday</label>
+                <button type="submit">Update Schedule</button>
+            </form>
+        </div>
+    </main>
+    <footer style="background-color: #c8102e; color: #ffffff; padding: 20px 0; text-align: center; font-family: Arial, sans-serif; width: 100%;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <p style="margin: 0; font-size: 14px;">© 2025 Salon. All rights reserved.</p>
+    </div>
+</footer>
+    <script src="/facilities.js"></script>
+    <script src="/script.js"></script>
+</body>
+</html>

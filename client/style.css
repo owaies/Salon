@@ -1,0 +1,615 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #F8FAFC;
+    color: #1F2937;
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loginSlide {
+    from {
+        transform: translateX(-50px) scale(0.95);
+        filter: blur(5px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+@keyframes inputSlide {
+    from {
+        transform: translateY(15px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes buttonGlow {
+    0% { box-shadow: 0 0 5px rgba(200, 16, 46, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(200, 16, 46, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(200, 16, 46, 0.5); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes gradientPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Typography */
+h2 {
+    color: #C8102E;
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+h2::after {
+    content: '';
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, #C8102E, #E63946);
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+h3 {
+    color: #1F2937;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+p {
+    color: #4B5563;
+    font-size: 1rem;
+}
+
+/* Header */
+header {
+    background: linear-gradient(90deg, #C8102E 0%, #E63946 100%);
+    color: #FFFFFF;
+    padding: 1.25rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    margin: 0 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #FECACA;
+}
+
+#logout {
+    background: #FFFFFF;
+    color: #C8102E;
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#logout:hover {
+    background: #FECACA;
+    color: #1F2937;
+}
+
+/* Main Content */
+main {
+    max-width: 1280px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+    animation: fadeIn 0.8s ease-in;
+}
+
+/* Hero Section with Background Image */
+.hero-section {
+    position: relative;
+    background-image: url('https://images.unsplash.com/photo-1512495039889-52a3b799c9f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 4rem 2rem;
+    border-radius: 16px;
+    text-align: center;
+    color: #FFFFFF;
+    margin-bottom: 2rem;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+.hero-section h2,
+.hero-section .book-now-button {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-section h2 {
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.book-now-button {
+    display: inline-block;
+    background: #C8102E;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-top: 1rem;
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-now-button:hover {
+    background: #E63946;
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(200, 16, 46, 0.8);
+}
+
+/* Facility Cards */
+.facility-card {
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    gap: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideUp 0.6s ease-out;
+}
+
+.facility-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.facility-card.image-left {
+    flex-direction: row;
+}
+
+.facility-card.image-right {
+    flex-direction: row-reverse;
+}
+
+.facility-card img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.facility-card img:hover {
+    transform: scale(1.02);
+}
+
+.facility-content {
+    flex: 1;
+}
+
+.facility-content button {
+    background: #C8102E;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 0.75rem;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.facility-content button:hover {
+    background: #E63946;
+    transform: scale(1.03);
+}
+
+/* Service Cards */
+.service-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideUp 0.6s ease-out;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.service-card img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.service-card img:hover {
+    transform: scale(1.02);
+}
+
+/* Booking Section */
+#booking-section {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.6s ease-out;
+}
+
+#booking-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+#booking-form input,
+#booking-form select {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#booking-form input:focus,
+#booking-form select:focus {
+    border-color: #C8102E;
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+    outline: none;
+}
+
+#booking-form button {
+    background: #C8102E;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#booking-form button:hover {
+    background: #E63946;
+    transform: scale(1.03);
+}
+
+#booking-error {
+    color: #E63946;
+    font-size: 0.875rem;
+    margin: 0.75rem 0;
+}
+
+#total-price {
+    color: #C8102E;
+    font-weight: 600;
+}
+
+/* Forms (General) */
+form {
+    background: #FFFFFF;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 1.5rem auto;
+    animation: slideUp 0.6s ease-out;
+}
+
+form input,
+form textarea,
+form select {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    border-color: #C8102E;
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+    outline: none;
+}
+
+form button {
+    background: #C8102E;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+form button:hover {
+    background: #E63946;
+    transform: scale(1.03);
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #C8102E;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: background 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background: #C8102E;
+    border-color: #C8102E;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✔';
+    color: #FFFFFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+}
+
+/* Appointments and Users */
+.appointment, .user {
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideUp 0.6s ease-out;
+}
+
+.appointment:hover, .user:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Admin and Staff Panels */
+#admin-panel, #staff-panel {
+    background: #FFFFFF;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+}
+
+#admin-service-form, #admin-facility-form, #edit-service-form, #edit-facility-form {
+    background: #F9FAFB;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+/* Loading Spinner */
+.loading {
+    border: 4px solid #E5E7EB;
+    border-top: 4px solid #C8102E;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation: spin 0.8s linear infinite;
+    margin: 1.5rem auto;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(90deg, #C8102E 0%, #E63946 100%);
+    color: #FFFFFF;
+    padding: 1.5rem 0;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    main {
+        padding: 0 1rem;
+    }
+
+    .facility-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .facility-card.image-left,
+    .facility-card.image-right {
+        flex-direction: column;
+    }
+
+    .facility-card img {
+        width: 100%;
+        max-width: 300px;
+        height: 200px;
+        margin: 0 auto;
+    }
+
+    .hero-section {
+        padding: 3rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    nav a {
+        margin: 0.25rem 0.75rem;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    .service-card img {
+        width: 100%;
+        max-width: 150px;
+        height: 100px;
+    }
+
+    form {
+        max-width: 100%;
+    }
+
+    .hero-section {
+        padding: 2rem 1rem;
+    }
+
+    .book-now-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    form input,
+    form textarea,
+    form select,
+    form button {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .facility-content button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .hero-section {
+        padding: 1.5rem 0.75rem;
+    }
+}
+
+/* Accessibility */
+:focus {
+    outline: 2px solid #C8102E;
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

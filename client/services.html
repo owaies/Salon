@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Elegance - Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Salon Elegance</div>
+        <nav>
+            <a href="/home.html">Home</a>
+            <a href="/services.html">Services</a>
+            <a href="/bookings.html">Bookings</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/adminStaff.html" id="staff-panel-link" style="display: none;">Staff Panel</a>
+            <a href="/adminStaff.html" id="admin-panel-link" style="display: none;">Admin Panel</a>
+            <a href="#" id="logout" style="display: none;">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Our Services</h2>
+        <div id="services"></div>
+        <p>Total Price: $<span id="total-price">0.00</span></p>
+        <section id="booking-section" style="display: none;">
+            <h2>Book an Appointment</h2>
+            <form id="booking-form">
+                <input type="date" id="date" required>
+                <select id="time" required>
+                    <option value="">Select Time</option>
+                </select>
+                <button type="submit">Book Now</button>
+                <p id="booking-error" style="display: none;"></p>
+            </form>
+        </section>
+    </main>
+    <script src="/script.js"></script>
+    <script src="/facilities.js"></script>
+</body>
+</html>
