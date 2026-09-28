@@ -10,20 +10,25 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+    }
 }));
 
 let pool;
 
 async function initializeDatabase() {
+    if (!process.env.SESSION_SECRET) throw new Error('SESSION_SECRET environment variable is required');
     pool = await mysql.createPool({
-        host: 'localhost',
-        user: 'root',
-        password: 'owaies',
-        database: 'salon',
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_NAME || 'salon',
         waitForConnections: true,
         connectionLimit: 10
     });
