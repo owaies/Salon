@@ -7,8 +7,8 @@ const Schedule = require('./models/Schedule');
 
 const app = express();
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.static(path.join(__dirname, '../client'), { maxAge: '1d', etag: true }));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
