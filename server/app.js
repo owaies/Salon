@@ -7,6 +7,8 @@ const Schedule = require('./models/Schedule');
 
 const app = express();
 
+if (!process.env.SESSION_SECRET) throw new Error('SESSION_SECRET environment variable is required');
+
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, '../client'), { maxAge: '1d', etag: true }));
 app.use(session({
@@ -23,7 +25,6 @@ app.use(session({
 let pool;
 
 async function initializeDatabase() {
-    if (!process.env.SESSION_SECRET) throw new Error('SESSION_SECRET environment variable is required');
     pool = await mysql.createPool({
         host: process.env.DB_HOST || 'localhost',
         user: process.env.DB_USER || 'root',
