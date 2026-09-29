@@ -31,6 +31,17 @@ app.use(session({
 
 let pool;
 
+app.get('/api/health', async (req, res) => {
+    if (!pool) return res.status(503).json({ status: 'unavailable', service: 'salon-api' });
+    try {
+        await pool.query('SELECT 1');
+        res.json({ status: 'ok', service: 'salon-api' });
+    } catch (error) {
+        console.error('Health check failed:', error);
+        res.status(503).json({ status: 'unavailable', service: 'salon-api' });
+    }
+});
+
 async function initializeDatabase() {
     pool = await mysql.createPool({
         host: process.env.DB_HOST || 'localhost',
