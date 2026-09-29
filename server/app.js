@@ -7,6 +7,13 @@ const Schedule = require('./models/Schedule');
 
 const app = express();
 
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
+
 if (!process.env.SESSION_SECRET) throw new Error('SESSION_SECRET environment variable is required');
 
 app.use(express.json({ limit: '1mb' }));
