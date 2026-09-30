@@ -9,6 +9,7 @@ class Appointment {
             FROM appointments a 
             JOIN users u ON a.user_id = u.id 
             JOIN services s ON a.service_id = s.id
+            ORDER BY a.date ASC, a.time ASC
         `);
         return rows;
     }
@@ -19,6 +20,7 @@ class Appointment {
             FROM appointments a 
             JOIN services s ON a.service_id = s.id 
             WHERE a.user_id = ?
+            ORDER BY a.date ASC, a.time ASC
         `, [user_id]);
         return rows;
     }
