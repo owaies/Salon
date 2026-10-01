@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const bcrypt = require('bcryptjs');
 const mysql = require('mysql2/promise');
 const path = require('path');
 const Appointment = require('./models/Appointment');
@@ -68,9 +69,19 @@ app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).send('Email and password required');
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password]);
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
         if (rows.length === 0) return res.status(401).send('Invalid credentials');
-        req.session.user = { id: rows[0].id, role: rows[0].role };
+        const user = rows[0];
+        let validPassword = false;
+        if (typeof user.password === 'string' && user.password.startsWith('$2')) {
+            validPassword = await bcrypt.compare(password, user.password);
+        } else if (user.password === password) {
+            validPassword = true;
+            const passwordHash = await bcrypt.hash(password, 12);
+            await pool.query('UPDATE users SET password = ? WHERE id = ?', [passwordHash, user.id]);
+        }
+        if (!validPassword) return res.status(401).send('Invalid credentials');
+        req.session.user = { id: user.id, role: user.role };
         res.send('Login successful');
     } catch (error) {
         console.error('Login error:', error);
@@ -82,7 +93,8 @@ app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) return res.status(400).send('Name, email, and password required');
     try {
-        await pool.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email, password, 'user']);
+        const passwordHash = await bcrypt.hash(password, 12);
+        await pool.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email, passwordHash, 'user']);
         res.send('Registration successful');
     } catch (error) {
         console.error('Register error:', error);
