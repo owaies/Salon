@@ -81,8 +81,14 @@ app.post('/api/login', async (req, res) => {
             await pool.query('UPDATE users SET password = ? WHERE id = ?', [passwordHash, user.id]);
         }
         if (!validPassword) return res.status(401).send('Invalid credentials');
-        req.session.user = { id: user.id, role: user.role };
-        res.send('Login successful');
+        req.session.regenerate(err => {
+            if (err) {
+                console.error('Session regeneration failed:', err);
+                return res.status(500).send('Server error');
+            }
+            req.session.user = { id: user.id, role: user.role };
+            res.send('Login successful');
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).send('Server error');
