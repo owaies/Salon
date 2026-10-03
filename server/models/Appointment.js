@@ -25,7 +25,11 @@ class Appointment {
         return rows;
     }
 
-    static async update(pool, id, { date, time }) {
+    static async update(pool, id, { date, time, user_id = null }) {
+        if (user_id !== null) {
+            await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ? AND user_id = ?', [date, time, id, user_id]);
+            return;
+        }
         await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ?', [date, time, id]);
     }
 
