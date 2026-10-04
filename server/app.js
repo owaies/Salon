@@ -97,10 +97,15 @@ app.post('/api/login', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) return res.status(400).send('Name, email, and password required');
+    const cleanName = typeof name === 'string' ? name.trim() : '';
+    const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (!cleanName || !cleanEmail || !password) return res.status(400).send('Name, email, and password required');
+    if (cleanName.length > 100 || cleanEmail.length > 254 || password.length < 8 || password.length > 72) {
+        return res.status(400).send('Invalid registration details');
+    }
     try {
         const passwordHash = await bcrypt.hash(password, 12);
-        await pool.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email, passwordHash, 'user']);
+        await pool.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [cleanName, cleanEmail, passwordHash, 'user']);
         res.send('Registration successful');
     } catch (error) {
         console.error('Register error:', error);
