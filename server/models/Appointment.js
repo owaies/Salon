@@ -27,10 +27,11 @@ class Appointment {
 
     static async update(pool, id, { date, time, user_id = null }) {
         if (user_id !== null) {
-            await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ? AND user_id = ?', [date, time, id, user_id]);
-            return;
+            const [result] = await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ? AND user_id = ?', [date, time, id, user_id]);
+            return result.affectedRows;
         }
-        await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ?', [date, time, id]);
+        const [result] = await pool.query('UPDATE appointments SET date = ?, time = ? WHERE id = ?', [date, time, id]);
+        return result.affectedRows;
     }
 
     static async cancel(pool, id, user_id, reason) {
