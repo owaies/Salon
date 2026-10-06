@@ -260,11 +260,12 @@ app.put('/api/appointments/:id', async (req, res) => {
     if (!date || !time) return res.status(400).send('Date and time required');
     try {
         const isStaff = ['staff', 'admin'].includes(req.session.user.role);
-        await Appointment.update(pool, req.params.id, {
+        const updated = await Appointment.update(pool, req.params.id, {
             date,
             time,
             user_id: isStaff ? null : req.session.user.id
         });
+        if (!updated) return res.status(404).send('Appointment not found');
         res.send('Appointment updated');
     } catch (error) {
         console.error('Error updating appointment:', error);
