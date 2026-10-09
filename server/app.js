@@ -67,9 +67,12 @@ app.get('/api/check-auth', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).send('Email and password required');
+    const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    if (!cleanEmail || typeof password !== 'string' || password.length === 0 || password.length > 72) {
+        return res.status(400).send('Valid email and password required');
+    }
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
         if (rows.length === 0) return res.status(401).send('Invalid credentials');
         const user = rows[0];
         let validPassword = false;
