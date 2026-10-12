@@ -117,8 +117,14 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-    req.session.destroy();
-    res.send('Logged out');
+    req.session.destroy(err => {
+        if (err) {
+            console.error('Logout failed:', err);
+            return res.status(500).send('Server error');
+        }
+        res.clearCookie('connect.sid', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
+        res.send('Logged out');
+    });
 });
 
 app.get('/api/services', async (req, res) => {
