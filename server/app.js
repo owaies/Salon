@@ -102,7 +102,7 @@ app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
     const cleanName = typeof name === 'string' ? name.trim() : '';
     const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-    if (!cleanName || !cleanEmail || !password) return res.status(400).send('Name, email, and password required');
+    if (!cleanName || !cleanEmail || typeof password !== 'string') return res.status(400).send('Name, email, and password required');
     if (cleanName.length > 100 || cleanEmail.length > 254 || password.length < 8 || password.length > 72) {
         return res.status(400).send('Invalid registration details');
     }
