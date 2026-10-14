@@ -4,7 +4,8 @@
   "description": "Salon appointment booking system",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test:db": "node test.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
