@@ -57,6 +57,15 @@ async function initializeDatabase() {
 
 initializeDatabase().catch(err => console.error('Database connection failed:', err));
 
+// Fail predictably while database initialization has not produced a pool.
+// Keep the health endpoint above this middleware available for diagnostics.
+app.use('/api', (req, res, next) => {
+    if (!pool) {
+        return res.status(503).json({ error: 'Database unavailable' });
+    }
+    next();
+});
+
 app.get('/api/check-auth', async (req, res) => {
     if (req.session.user) {
         res.json({ role: req.session.user.role });
