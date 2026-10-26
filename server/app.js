@@ -7,6 +7,7 @@ const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
 
 const app = express();
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -112,7 +113,7 @@ app.post('/api/register', async (req, res) => {
     const cleanName = typeof name === 'string' ? name.trim() : '';
     const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
     if (!cleanName || !cleanEmail || typeof password !== 'string') return res.status(400).send('Name, email, and password required');
-    if (cleanName.length > 100 || cleanEmail.length > 254 || password.length < 8 || password.length > 72) {
+    if (cleanName.length > 100 || cleanEmail.length > 254 || !EMAIL_PATTERN.test(cleanEmail) || password.length < 8 || password.length > 72) {
         return res.status(400).send('Invalid registration details');
     }
     try {
