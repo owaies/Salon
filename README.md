@@ -37,6 +37,16 @@ npm run test:db
 
 This check authenticates a database connection and closes it afterward. It does not create tables, alter schema, or modify application records.
 
+## Input validation tests
+
+From `server/`, run:
+
+```bash
+npm test
+```
+
+The focused Node test suite covers login email normalization, malformed addresses, and bcrypt's 72-byte password boundary, including multibyte UTF-8 passwords. It does not require a live MySQL database.
+
 ## Operational notes
 
 - Use a unique, long session secret for deployments.
