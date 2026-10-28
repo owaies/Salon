@@ -7,7 +7,7 @@ const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
 
 const app = express();
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid } = require('./validation');
 
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -76,11 +76,11 @@ app.get('/api/check-auth', async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
-    const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-    if (!cleanEmail || typeof password !== 'string' || password.length === 0 || password.length > 72) {
+    const credentials = normalizeLoginCredentials(req.body?.email, req.body?.password);
+    if (!credentials) {
         return res.status(400).send('Valid email and password required');
     }
+    const { email: cleanEmail, password } = credentials;
     try {
         const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
         if (rows.length === 0) return res.status(401).send('Invalid credentials');
@@ -113,7 +113,7 @@ app.post('/api/register', async (req, res) => {
     const cleanName = typeof name === 'string' ? name.trim() : '';
     const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
     if (!cleanName || !cleanEmail || typeof password !== 'string') return res.status(400).send('Name, email, and password required');
-    if (cleanName.length > 100 || cleanEmail.length > 254 || !EMAIL_PATTERN.test(cleanEmail) || password.length < 8 || password.length > 72) {
+    if (cleanName.length > 100 || cleanEmail.length > 254 || !EMAIL_PATTERN.test(cleanEmail) || password.length < 8 || !isBcryptPasswordLengthValid(password)) {
         return res.status(400).send('Invalid registration details');
     }
     try {
