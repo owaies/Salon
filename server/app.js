@@ -7,7 +7,7 @@ const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
 
 const app = express();
-const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid } = require('./validation');
+const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid, normalizeServicePayload } = require('./validation');
 
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -149,8 +149,9 @@ app.get('/api/services', async (req, res) => {
 
 app.post('/api/services', async (req, res) => {
     if (req.session.user?.role !== 'admin') return res.status(403).send('Forbidden');
-    const { name, description, price, image } = req.body;
-    if (!name || !price) return res.status(400).send('Name and price required');
+    const service = normalizeServicePayload(req.body);
+    if (!service) return res.status(400).send('Valid service name and positive price are required');
+    const { name, description, price, image } = service;
     try {
         await pool.query('INSERT INTO services (name, description, price, image) VALUES (?, ?, ?, ?)', [name, description, price, image]);
         res.send('Service added');
@@ -162,8 +163,9 @@ app.post('/api/services', async (req, res) => {
 
 app.put('/api/services/:id', async (req, res) => {
     if (req.session.user?.role !== 'admin') return res.status(403).send('Forbidden');
-    const { name, description, price, image } = req.body;
-    if (!name || !price) return res.status(400).send('Name and price required');
+    const service = normalizeServicePayload(req.body);
+    if (!service) return res.status(400).send('Valid service name and positive price are required');
+    const { name, description, price, image } = service;
     try {
         await pool.query('UPDATE services SET name = ?, description = ?, price = ?, image = ? WHERE id = ?', [name, description, price, image, req.params.id]);
         res.send('Service updated');
