@@ -229,7 +229,7 @@ async function loadServices(forAdmin = false) {
         const services = await response.json();
         servicesDiv.innerHTML = services.length ? services.map(service => `
             <div class="service-card">
-                <img src="${service.image || 'https://via.placeholder.com/150'}" alt="${service.name || 'Service'}">
+                <img src="${escapeAttribute(service.image || 'https://via.placeholder.com/150')}" alt="${escapeAttribute(service.name || 'Service')}">
                 <h3>${escapeHtml(service.name || 'Unnamed Service')}</h3>
                 <p>${escapeHtml(service.description || 'No description')}</p>
                 <p>$${parseFloat(service.price || 0).toFixed(2)}</p>
@@ -756,6 +756,16 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function escapeAttribute(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    })[character]);
 }
 
 function escapeQuotes(text) {
