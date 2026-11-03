@@ -258,16 +258,20 @@ app.get('/api/appointments', async (req, res) => {
 app.post('/api/appointments', async (req, res) => {
     if (!req.session.user) return res.status(403).send('Forbidden');
     const { serviceIds, date, time } = req.body;
-    if (!serviceIds?.length || !date || !time) return res.status(400).send('Service IDs, date, and time are required');
+    if (!Array.isArray(serviceIds) || serviceIds.length === 0 || typeof date !== 'string' || !date.trim() || typeof time !== 'string' || !time.trim()) {
+        return res.status(400).send('A non-empty service ID array, date, and time are required');
+    }
+    const normalizedServiceIds = serviceIds.map(Number);
+    if (normalizedServiceIds.some((serviceId) => !Number.isSafeInteger(serviceId) || serviceId <= 0)) {
+        return res.status(400).send('Service IDs must be positive integers');
+    }
     try {
-        for (const serviceId of serviceIds) {
-            await Appointment.create(pool, {
-                user_id: req.session.user.id,
-                service_id: serviceId,
-                date,
-                time
-            });
-        }
+        await Appointment.createMany(pool, normalizedServiceIds.map((serviceId) => ({
+            user_id: req.session.user.id,
+            service_id: serviceId,
+            date: date.trim(),
+            time: time.trim()
+        })));
         res.status(201).send('Appointment created');
     } catch (error) {
         console.error('Error creating appointment:', error);
