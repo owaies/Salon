@@ -3,6 +3,30 @@ class Appointment {
         await pool.query('INSERT INTO appointments (user_id, service_id, date, time, status) VALUES (?, ?, ?, ?, ?)', [user_id, service_id, date, time, 'booked']);
     }
 
+    static async createMany(pool, appointments) {
+        if (!Array.isArray(appointments) || appointments.length === 0) {
+            throw new TypeError('At least one appointment is required');
+        }
+
+        const connection = await pool.getConnection();
+        try {
+            await connection.beginTransaction();
+            for (const appointment of appointments) {
+                await this.create(connection, appointment);
+            }
+            await connection.commit();
+        } catch (error) {
+            try {
+                await connection.rollback();
+            } catch {
+                // Preserve the original booking error if rollback also fails.
+            }
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
     static async findAll(pool) {
         const [rows] = await pool.query(`
             SELECT a.*, u.name AS user_name, s.name AS service_name 
