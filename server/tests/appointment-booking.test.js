@@ -72,3 +72,22 @@ test('rejects an empty appointment batch before opening a connection', async () 
     await assert.rejects(Appointment.createMany(pool, []), /At least one appointment/);
     assert.equal(connectionRequested, false);
 });
+
+
+test('cancellation reports whether an owned appointment was updated', async () => {
+    const calls = [];
+    const pool = {
+        query: async (sql, params) => {
+            calls.push({ sql, params });
+            return [{ affectedRows: 0 }];
+        },
+    };
+
+    const missing = await Appointment.cancel(pool, 42, 7, 'No longer needed');
+    assert.equal(missing, 0);
+    assert.deepEqual(calls[0].params, ['cancelled', 'No longer needed', 42, 7]);
+    assert.match(calls[0].sql, /WHERE id = \? AND user_id = \?/);
+
+    pool.query = async () => [{ affectedRows: 1 }];
+    assert.equal(await Appointment.cancel(pool, 42, 7, 'No longer needed'), 1);
+});

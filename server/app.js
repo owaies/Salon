@@ -301,9 +301,11 @@ app.put('/api/appointments/:id', async (req, res) => {
 app.delete('/api/appointments/:id', async (req, res) => {
     if (!req.session.user) return res.status(403).send('Forbidden');
     const { reason } = req.body;
-    if (!reason) return res.status(400).send('Cancellation reason required');
+    const cleanReason = typeof reason === 'string' ? reason.trim() : '';
+    if (!cleanReason) return res.status(400).send('Cancellation reason required');
     try {
-        await Appointment.cancel(pool, req.params.id, req.session.user.id, reason);
+        const cancelled = await Appointment.cancel(pool, req.params.id, req.session.user.id, cleanReason);
+        if (!cancelled) return res.status(404).send('Appointment not found');
         res.send('Appointment cancelled');
     } catch (error) {
         console.error('Error cancelling appointment:', error);
