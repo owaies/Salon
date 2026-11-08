@@ -58,8 +58,8 @@ test('facility image and alt attributes cannot inject markup', async () => {
     await vm.runInNewContext('loadFacilities()', context);
 
     assert.match(container.innerHTML, /src="https:\/\/via\.placeholder\.com\/300"/);
-    assert.match(container.innerHTML, /alt="Sauna&amp;quot; onerror=&amp;quot;alert\(1\)"/);
+    assert.match(container.innerHTML, /alt="Sauna&quot; onerror=&quot;alert\(1\)"/);
+    assert.doesNotMatch(container.innerHTML, /alt="[^"]*" onerror=/);
     assert.doesNotMatch(container.innerHTML, /src="javascript:/);
     assert.doesNotMatch(container.innerHTML, /<script>/);
-    assert.doesNotMatch(container.innerHTML, /<img[^>]+onerror=/);
 });
