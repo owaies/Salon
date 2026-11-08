@@ -15,7 +15,7 @@ async function loadFacilities(forAdmin = false) {
         const facilities = await response.json();
         facilitiesDiv.innerHTML = facilities.length ? facilities.map((facility, index) => `
             <div class="facility-card ${index % 2 === 0 ? 'image-left' : 'image-right'}">
-                <img src="${facility.image || 'https://via.placeholder.com/300'}" alt="${facility.name || 'Facility'}">
+                <img src="${escapeAttribute(safeImageSource(facility.image))}" alt="${escapeAttribute(facility.name || 'Facility')}">
                 <div class="facility-content">
                     <h3>${escapeHtml(facility.name || 'Unnamed Facility')}</h3>
                     <p>${escapeHtml(facility.description || 'No description available')}</p>
@@ -159,4 +159,26 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function safeImageSource(value) {
+    const fallback = 'https://via.placeholder.com/300';
+    if (typeof value !== 'string' || !value.trim()) return fallback;
+
+    const candidate = value.trim();
+    try {
+        const parsed = new URL(candidate, 'https://salon.invalid');
+        return ['http:', 'https:'].includes(parsed.protocol) ? candidate : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function escapeAttribute(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
