@@ -5,6 +5,7 @@ const {
     isBcryptPasswordLengthValid,
     normalizeLoginCredentials,
     normalizeServicePayload,
+    normalizeFacilityPayload,
 } = require('../validation');
 
 test('normalizes valid login email addresses', () => {
@@ -65,5 +66,44 @@ test('rejects invalid service names, descriptions, images, and prices', () => {
 
     for (const payload of invalidPayloads) {
         assert.equal(normalizeServicePayload(payload), null);
+    }
+});
+
+
+test('normalizes valid facility details and trims an optional image URL', () => {
+    assert.deepEqual(
+        normalizeFacilityPayload({
+            name: '  Steam Room  ',
+            description: '  Private wellness space  ',
+            image: '  /images/steam-room.jpg  ',
+        }),
+        { name: 'Steam Room', description: 'Private wellness space', image: '/images/steam-room.jpg' },
+    );
+});
+
+test('allows omitted facility descriptions and images', () => {
+    assert.deepEqual(
+        normalizeFacilityPayload({ name: ' Sauna ' }),
+        { name: 'Sauna', description: '', image: null },
+    );
+});
+
+test('rejects invalid facility fields and unsafe image protocols', () => {
+    const invalidPayloads = [
+        null,
+        [],
+        {},
+        { name: '   ' },
+        { name: 'x'.repeat(101) },
+        { name: 'Sauna', description: 123 },
+        { name: 'Sauna', description: 'x'.repeat(2001) },
+        { name: 'Sauna', image: { url: '/image.png' } },
+        { name: 'Sauna', image: 'x'.repeat(2049) },
+        { name: 'Sauna', image: 'javascript:alert(1)' },
+        { name: 'Sauna', image: 'data:text/html,<script>alert(1)</script>' },
+    ];
+
+    for (const payload of invalidPayloads) {
+        assert.equal(normalizeFacilityPayload(payload), null);
     }
 });

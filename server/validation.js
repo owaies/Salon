@@ -25,6 +25,7 @@ module.exports = {
     isBcryptPasswordLengthValid,
     normalizeLoginCredentials,
     normalizeServicePayload,
+    normalizeFacilityPayload,
 };
 
 function normalizeServicePayload(payload) {
@@ -58,3 +59,32 @@ function normalizeServicePayload(payload) {
     return { name, description, price, image };
 }
 
+
+
+function normalizeFacilityPayload(payload) {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+
+    const name = typeof payload.name === 'string' ? payload.name.trim() : '';
+    const description = payload.description == null
+        ? ''
+        : typeof payload.description === 'string' ? payload.description.trim() : null;
+    const rawImage = typeof payload.image === 'string' ? payload.image.trim() : payload.image;
+    const image = rawImage == null || rawImage === ''
+        ? null
+        : typeof rawImage === 'string' && rawImage.length <= 2048 ? rawImage : undefined;
+
+    if (!name || name.length > 100 || description === null || description.length > 2000 || image === undefined) {
+        return null;
+    }
+
+    if (image !== null) {
+        try {
+            const parsedImage = new URL(image, 'https://salon.invalid');
+            if (!['http:', 'https:'].includes(parsedImage.protocol)) return null;
+        } catch {
+            return null;
+        }
+    }
+
+    return { name, description, image };
+}

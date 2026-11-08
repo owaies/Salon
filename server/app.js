@@ -7,7 +7,7 @@ const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
 
 const app = express();
-const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid, normalizeServicePayload } = require('./validation');
+const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid, normalizeServicePayload, normalizeFacilityPayload } = require('./validation');
 
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -198,8 +198,9 @@ app.get('/api/facilities', async (req, res) => {
 
 app.post('/api/facilities', async (req, res) => {
     if (req.session.user?.role !== 'admin') return res.status(403).send('Forbidden');
-    const { name, description, image } = req.body;
-    if (!name) return res.status(400).send('Name required');
+    const facility = normalizeFacilityPayload(req.body);
+    if (!facility) return res.status(400).send('Valid facility details are required');
+    const { name, description, image } = facility;
     try {
         await pool.query('INSERT INTO facilities (name, description, image) VALUES (?, ?, ?)', [name, description, image]);
         res.send('Facility added');
@@ -211,8 +212,9 @@ app.post('/api/facilities', async (req, res) => {
 
 app.put('/api/facilities/:id', async (req, res) => {
     if (req.session.user?.role !== 'admin') return res.status(403).send('Forbidden');
-    const { name, description, image } = req.body;
-    if (!name) return res.status(400).send('Name required');
+    const facility = normalizeFacilityPayload(req.body);
+    if (!facility) return res.status(400).send('Valid facility details are required');
+    const { name, description, image } = facility;
     try {
         await pool.query('UPDATE facilities SET name = ?, description = ?, image = ? WHERE id = ?', [name, description, image, req.params.id]);
         res.send('Facility updated');
