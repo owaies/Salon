@@ -10,3 +10,4 @@ Test a customer updating their own appointment, the same customer attempting ano
 - Confirm a missing appointment and an appointment owned by another customer both return HTTP 404 without revealing ownership.
 - Confirm a missing, non-string, or whitespace-only cancellation reason returns HTTP 400.
 - Confirm a successful cancellation returns success only when the ownership-scoped update affects a row.
+- Confirm only appointments whose current status is `booked` can be cancelled; repeat cancellation and cancellation after completion must not change the record.
