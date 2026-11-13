@@ -60,8 +60,8 @@ class Appointment {
 
     static async cancel(pool, id, user_id, reason) {
         const [result] = await pool.query(
-            'UPDATE appointments SET status = ?, cancel_reason = ? WHERE id = ? AND user_id = ?',
-            ['cancelled', reason, id, user_id]
+            'UPDATE appointments SET status = ?, cancel_reason = ? WHERE id = ? AND user_id = ? AND status = ?',
+            ['cancelled', reason, id, user_id, 'booked']
         );
         return result.affectedRows;
     }
