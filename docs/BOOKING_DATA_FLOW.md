@@ -19,4 +19,4 @@ Only collect fields required to create and manage a booking. Avoid storing sensi
 
 The booking and appointment-update endpoints accept a calendar-valid date in `YYYY-MM-DD` format and a 24-hour time in `HH:MM` format. Both values are trimmed before persistence. Invalid dates (including impossible month/day combinations), malformed times, and non-string values are rejected with HTTP 400 before a database write. Past dates are not prohibited by this validation because staff may need to correct historical bookings.
 
-Regression checks cover leap days, invalid calendar dates, malformed time values, whitespace normalization, and both booking and update request paths.
+Unit tests cover leap days, invalid calendar dates, malformed time values, and whitespace normalization. During API smoke tests, confirm the validator is applied to both booking and update requests.
