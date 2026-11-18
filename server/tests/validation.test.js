@@ -7,6 +7,7 @@ const {
     normalizeServicePayload,
     normalizeFacilityPayload,
 } = require('../validation');
+const { normalizeAppointmentSchedule } = require('../appointment-validation');
 
 test('normalizes valid login email addresses', () => {
     assert.deepEqual(
@@ -105,5 +106,40 @@ test('rejects invalid facility fields and unsafe image protocols', () => {
 
     for (const payload of invalidPayloads) {
         assert.equal(normalizeFacilityPayload(payload), null);
+    }
+});
+
+
+test('normalizes valid appointment dates and times', () => {
+    assert.deepEqual(
+        normalizeAppointmentSchedule('  2024-02-29  ', '  09:30  '),
+        { date: '2024-02-29', time: '09:30' },
+    );
+    assert.deepEqual(
+        normalizeAppointmentSchedule('2026-12-31', '23:59'),
+        { date: '2026-12-31', time: '23:59' },
+    );
+});
+
+test('rejects malformed and impossible appointment dates', () => {
+    for (const date of [
+        '',
+        '2026-2-01',
+        '2026/02/01',
+        '2026-02-29',
+        '2026-04-31',
+        '2026-00-01',
+        '2026-13-01',
+        '0000-01-01',
+        null,
+        20260201,
+    ]) {
+        assert.equal(normalizeAppointmentSchedule(date, '09:00'), null, String(date));
+    }
+});
+
+test('rejects invalid appointment times', () => {
+    for (const time of ['', '9:00', '24:00', '12:60', '12:00:00', 'noon', null, 900]) {
+        assert.equal(normalizeAppointmentSchedule('2026-02-01', time), null, String(time));
     }
 });
