@@ -5,6 +5,7 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
+const { normalizeAppointmentSchedule } = require('./appointment-validation');
 
 const app = express();
 const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid, normalizeServicePayload, normalizeFacilityPayload } = require('./validation');
@@ -260,8 +261,9 @@ app.get('/api/appointments', async (req, res) => {
 app.post('/api/appointments', async (req, res) => {
     if (!req.session.user) return res.status(403).send('Forbidden');
     const { serviceIds, date, time } = req.body;
-    if (!Array.isArray(serviceIds) || serviceIds.length === 0 || typeof date !== 'string' || !date.trim() || typeof time !== 'string' || !time.trim()) {
-        return res.status(400).send('A non-empty service ID array, date, and time are required');
+    const schedule = normalizeAppointmentSchedule(date, time);
+    if (!Array.isArray(serviceIds) || serviceIds.length === 0 || !schedule) {
+        return res.status(400).send('A non-empty service ID array, valid date (YYYY-MM-DD), and time (HH:MM) are required');
     }
     const normalizedServiceIds = serviceIds.map(Number);
     if (normalizedServiceIds.some((serviceId) => !Number.isSafeInteger(serviceId) || serviceId <= 0)) {
@@ -271,8 +273,8 @@ app.post('/api/appointments', async (req, res) => {
         await Appointment.createMany(pool, normalizedServiceIds.map((serviceId) => ({
             user_id: req.session.user.id,
             service_id: serviceId,
-            date: date.trim(),
-            time: time.trim()
+            date: schedule.date,
+            time: schedule.time
         })));
         res.status(201).send('Appointment created');
     } catch (error) {
@@ -284,12 +286,13 @@ app.post('/api/appointments', async (req, res) => {
 app.put('/api/appointments/:id', async (req, res) => {
     if (!req.session.user) return res.status(403).send('Forbidden');
     const { date, time } = req.body;
-    if (!date || !time) return res.status(400).send('Date and time required');
+    const schedule = normalizeAppointmentSchedule(date, time);
+    if (!schedule) return res.status(400).send('Valid date (YYYY-MM-DD) and time (HH:MM) are required');
     try {
         const isStaff = ['staff', 'admin'].includes(req.session.user.role);
         const updated = await Appointment.update(pool, req.params.id, {
-            date,
-            time,
+            date: schedule.date,
+            time: schedule.time,
             user_id: isStaff ? null : req.session.user.id
         });
         if (!updated) return res.status(404).send('Appointment not found');
