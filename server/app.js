@@ -5,7 +5,7 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const Appointment = require('./models/Appointment');
 const Schedule = require('./models/Schedule');
-const { normalizeAppointmentSchedule } = require('./appointment-validation');
+const { normalizeAppointmentSchedule, normalizeScheduleWindow } = require('./appointment-validation');
 
 const app = express();
 const { EMAIL_PATTERN, normalizeLoginCredentials, isBcryptPasswordLengthValid, normalizeServicePayload, normalizeFacilityPayload } = require('./validation');
@@ -376,9 +376,10 @@ app.delete('/api/users/:id', async (req, res) => {
 
 app.get('/api/slots', async (req, res) => {
     const { date } = req.query;
-    if (!date) return res.status(400).send('Date is required');
+    const normalizedDate = normalizeAppointmentSchedule(date, '00:00');
+    if (!normalizedDate) return res.status(400).send('Valid date (YYYY-MM-DD) is required');
     try {
-        const slots = await Schedule.generateSlots(pool, date);
+        const slots = await Schedule.generateSlots(pool, normalizedDate.date);
         res.json(slots);
     } catch (error) {
         console.error('Error fetching slots:', error);
@@ -389,9 +390,17 @@ app.get('/api/slots', async (req, res) => {
 app.post('/api/schedule', async (req, res) => {
     if (!req.session.user || !['staff', 'admin'].includes(req.session.user.role)) return res.status(403).send('Forbidden');
     const { date, startTime, endTime, isHoliday } = req.body;
-    if (!date || !startTime || !endTime) return res.status(400).send('Date, start time, and end time required');
+    const schedule = normalizeScheduleWindow(date, startTime, endTime, isHoliday);
+    if (!schedule) {
+        return res.status(400).send('A valid date, increasing same-day time window, and holiday flag are required');
+    }
     try {
-        await Schedule.create(pool, { date, start_time: startTime, end_time: endTime, is_holiday: isHoliday });
+        await Schedule.create(pool, {
+            date: schedule.date,
+            start_time: schedule.startTime,
+            end_time: schedule.endTime,
+            is_holiday: schedule.isHoliday,
+        });
         res.send('Schedule created');
     } catch (error) {
         console.error('Error creating schedule:', error);
