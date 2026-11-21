@@ -23,4 +23,26 @@ function normalizeAppointmentSchedule(date, time) {
     return { date: normalizedDate, time: normalizedTime };
 }
 
-module.exports = { normalizeAppointmentSchedule };
+function normalizeScheduleWindow(date, startTime, endTime, isHoliday) {
+    if (typeof isHoliday !== 'boolean') return null;
+
+    const start = normalizeAppointmentSchedule(date, startTime);
+    const end = normalizeAppointmentSchedule(date, endTime);
+    if (!start || !end) return null;
+
+    const toMinutes = (time) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    if (toMinutes(end.time) <= toMinutes(start.time)) return null;
+
+    return {
+        date: start.date,
+        startTime: start.time,
+        endTime: end.time,
+        isHoliday,
+    };
+}
+
+module.exports = { normalizeAppointmentSchedule, normalizeScheduleWindow };
