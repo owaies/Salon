@@ -7,7 +7,7 @@ const {
     normalizeServicePayload,
     normalizeFacilityPayload,
 } = require('../validation');
-const { normalizeAppointmentSchedule } = require('../appointment-validation');
+const { normalizeAppointmentSchedule, normalizeScheduleWindow } = require('../appointment-validation');
 
 test('normalizes valid login email addresses', () => {
     assert.deepEqual(
@@ -141,5 +141,34 @@ test('rejects malformed and impossible appointment dates', () => {
 test('rejects invalid appointment times', () => {
     for (const time of ['', '9:00', '24:00', '12:60', '12:00:00', 'noon', null, 900]) {
         assert.equal(normalizeAppointmentSchedule('2026-02-01', time), null, String(time));
+    }
+});
+
+
+test('normalizes valid same-day staff schedule windows', () => {
+    assert.deepEqual(
+        normalizeScheduleWindow(' 2026-11-21 ', ' 09:00 ', '17:30', false),
+        { date: '2026-11-21', startTime: '09:00', endTime: '17:30', isHoliday: false },
+    );
+    assert.deepEqual(
+        normalizeScheduleWindow('2026-12-25', '10:00', '14:00', true),
+        { date: '2026-12-25', startTime: '10:00', endTime: '14:00', isHoliday: true },
+    );
+});
+
+test('rejects invalid or non-increasing staff schedule windows', () => {
+    const invalidWindows = [
+        ['2026-02-30', '09:00', '17:00', false],
+        ['2026-11-21', '9:00', '17:00', false],
+        ['2026-11-21', '09:00', '24:00', false],
+        ['2026-11-21', '17:00', '09:00', false],
+        ['2026-11-21', '09:00', '09:00', false],
+        ['2026-11-21', '23:30', '00:30', false],
+        ['2026-11-21', '09:00', '17:00', 'false'],
+        ['2026-11-21', '09:00', '17:00', null],
+    ];
+
+    for (const values of invalidWindows) {
+        assert.equal(normalizeScheduleWindow(...values), null, JSON.stringify(values));
     }
 });
